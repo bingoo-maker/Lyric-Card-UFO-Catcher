@@ -1,0 +1,2317 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UFO 가사뽑기 이벤트 페이지" />
+  <title>🛸 가사뽑기</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: radial-gradient(circle at top, #2e2456 0%, #11101d 45%, #050509 100%);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px;
+    }
+    .app {
+      width: 100%;
+      max-width: 430px;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(26px, 7.4vw, 32px);
+      margin: 0 0 22px;
+      letter-spacing: 0.035em;
+      font-weight: 850;
+      line-height: 1.18;
+    }
+    .machine {
+      position: relative;
+      height: 170px;
+      margin-bottom: 18px;
+    }
+    .ufo {
+      font-size: 66px;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.45));
+      user-select: none;
+    }
+    .claw {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      width: 4px;
+      height: 55px;
+      background: rgba(255,255,255,0.65);
+      transform: translateX(-50%);
+      transform-origin: top;
+    }
+    .claw::after {
+      content: "⌄";
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      color: rgba(255,255,255,0.9);
+    }
+    .capsules {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 26px;
+      opacity: 0.9;
+      user-select: none;
+    }
+    .drawing .ufo { animation: hover 0.55s infinite alternate ease-in-out; }
+    .drawing .claw { animation: grab 1.8s ease-in-out; }
+    @keyframes hover {
+      from { transform: translateX(-55%) translateY(0); }
+      to { transform: translateX(-45%) translateY(7px); }
+    }
+    @keyframes grab {
+      0% { height: 45px; }
+      45% { height: 95px; }
+      80% { height: 48px; }
+      100% { height: 55px; }
+    }
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 15px 24px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #171124;
+      background: #fff36d;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active { transform: translateY(1px); }
+    button:disabled {
+      opacity: 0.55;
+      cursor: wait;
+    }
+    .card {
+      display: none;
+      margin-top: 22px;
+      padding: 24px 20px 22px;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.96);
+      color: #171124;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.42);
+      animation: pop 0.35s ease-out;
+      text-align: left;
+    }
+    .card.show { display: block; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .song {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #6b5aa8;
+      margin-bottom: 18px;
+      word-break: keep-all;
+    }
+    .lyric {
+      font-family: "Georgia", "Apple SD Gothic Neo", serif;
+      font-size: clamp(18px, 5.2vw, 20px);
+      line-height: 1.65;
+      letter-spacing: -0.04em;
+      text-align: center;
+      white-space: pre-line;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+      margin: 0 0 22px;
+    }
+    .comment {
+      margin: 0 auto 22px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #f1eefb;
+      font-size: clamp(16px, 4.8vw, 18px);
+      font-weight: 800;
+      line-height: 1.45;
+      text-align: center;
+      white-space: pre-line;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .bill {
+      border-top: 1px dashed #c9c1e6;
+      padding-top: 18px;
+      text-align: center;
+    }
+    .amount-label {
+      font-size: 13px;
+      color: #6b5aa8;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .amount {
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .bill-text {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #4d4664;
+      white-space: pre-line;
+      word-break: keep-all;
+    }
+    .actions {
+      display: none;
+      margin-top: 16px;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .actions.show { display: flex; }
+    .secondary {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: none;
+      font-size: 15px;
+      padding: 12px 18px;
+    }
+    .primary {
+      font-size: 15px;
+      padding: 12px 18px;
+    }
+    @media (max-width: 360px) {
+      body { padding: 14px; }
+      .machine { height: 158px; }
+      .ufo { font-size: 60px; }
+      .claw { top: 64px; }
+      .capsules { font-size: 23px; }
+      .card { padding: 22px 16px 20px; border-radius: 24px; }
+      button { width: 100%; }
+      .actions button { width: auto; flex: 1 1 140px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>🛸 가사뽑기</h1>
+
+    <section id="machine" class="machine" aria-hidden="true">
+      <div class="ufo">🛸</div>
+      <div class="claw"></div>
+      <div class="capsules">💿 ✨ 📀 🌙 💿 ✨ 📀</div>
+    </section>
+
+    <button id="drawBtn" type="button">가사 뽑기</button>
+
+    <section id="card" class="card" aria-live="polite">
+      <div id="song" class="song"></div>
+      <p id="lyric" class="lyric"></p>
+      <div id="comment" class="comment"></div>
+      <div class="bill">
+        <div class="amount-label">💿 후정산 금액</div>
+        <div id="amount" class="amount"></div>
+        <div class="bill-text">이 가사뽑기는 후정산입니다.
+마음에 드셨다면 입금해주세요.</div>
+      </div>
+    </section>
+
+    <div id="actions" class="actions">
+      <button class="secondary" id="againBtn" type="button">다시 뽑기</button>
+      <button class="primary" id="joinBtn" type="button">공구 참여하기</button>
+    </div>
+  </main>
+
+  <script>
+    const cards = [
+      {
+            "song": "무얼 훔치지",
+            "lyric": "후회를 하나 둘 꺼내서\n읽으려다 그냥 말았어\n거의 외웠으니까",
+            "comment": "이제 오답노트를 만들 차례입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "꿈들을 몇 벌 꺼내서\n입으려다 그냥 말았어\n어울리지 않잖아",
+            "comment": "다이어트를 합시다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "텅 빈 하루를 채우다\n잠은 가루가 됐나봐",
+            "comment": "수면부족으로 판단됩니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "태양은 언제나 멀지",
+            "comment": "태양 탓을 하기 전에\n일단 소파에서 일어나 보겠습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "조바심에 저 바람에\n주파수를 훔쳐봐도",
+            "comment": "와이파이는 아닙니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "노을을 훔치는 저기 언덕을 가도",
+            "comment": "무단반출은 금지입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "왜 내가 바라보아도\n녹슬지 않는지",
+            "comment": "생각보다 오래 가는 것들이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "날짜들보다 오래 된\n발자국처럼 노래가",
+            "comment": "업데이트가 필요한 추억입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "포기하려 했는데",
+            "comment": "안됩니다.\n다시 생각하세요.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무얼 훔치지",
+            "lyric": "난 눈물을 훔치지",
+            "comment": "절도는 범죄입니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "글씨가 너무 삐뚤빼둘한 탓에\n뭐라 썼는지 알아먹을 수가 없네",
+            "comment": "의사로 판정되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "나도 내 글을 독해할 수가 없는데\n너는 의미를 곡해할 수밖에",
+            "comment": "작성자도 모르는 내용입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "어버버버\n웅얼웅얼\n우물쭈물\n더듬더듬",
+            "comment": "회의 시간으로 추정됩니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "단순하지만 그리 쉽지는 않은",
+            "comment": "생각보다 많은 일이 여기에 해당됩니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "마음과 마음의 헝겊들로 기워진 옷을",
+            "comment": "세탁은 단독세탁을 권장합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "마음과 마음의 온실에서 키워진 꽃을",
+            "comment": "물은 충분히 주셨습니까?",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "난 네가 입어 주길 바라지만을\n난해한 차림으로 보일 수밖에",
+            "comment": "설명하려던 것과 전달된 것은\n종종 다른 모양입니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "난 네가 예뻐하길 바라지만을\n난처한 표정을 지을 수밖에",
+            "comment": "의도와 결과가 어긋난 경험이\n한 번쯤은 있으셨을 겁니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "서투른 웅얼거림은\n사실은 단단한 씨앗이 삼켜져",
+            "comment": "생각보다 중요한 말은\n처음부터 잘 나오지 않습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "어버버버",
+            "lyric": "폭죽처럼 예쁜 말을 틔워 보려다\n폭주하듯 입가에서 어버버버 터진 거야",
+            "comment": "그래도 말하려고 했다는 점은\n높이 평가합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "커튼이 가려놓은\n창 밖의 하루를",
+            "comment": "일단 커튼부터 열어보겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "말이 그저 하고픈지\n할 말이 있는지",
+            "comment": "본인도 아직 모르는 상태입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "잠이 와도\n쉽사리 잠들지 못해요",
+            "comment": "침대와의 협상이 결렬되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "터뜨리지 못한\n분노를 삼키네요",
+            "comment": "물을 한 잔 권장합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "삼켜야만 할 일\n투성이인 오늘 하룰테죠",
+            "comment": "오늘도 할 일 목록이\n본인을 이겼습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "달이 등장 했지만\n아직도 하루는",
+            "comment": "퇴근했는데 퇴근한 것 같지 않은 상태.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "울지는 말아요\n아니 울어도 돼요",
+            "comment": "생각보다 많은 사람들이\n이 사이에서 잠시 멈춰갑니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "삼키다 너무 힘이 들면\n토해 낼 때가 있겠죠",
+            "comment": "괜찮습니다.\n항상 잘 넘길 필요는 없습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "삼키고 또 삼키고 또 삼키다 보면 언젠가\n소화가 되어 버릴 날이",
+            "comment": "시간이 해결한다는 말은\n가끔 정말 사실이기도 합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "오늘도",
+            "lyric": "믿어도 될까요\n믿어보기로 해요",
+            "comment": "일단 오늘 하루만\n믿어보기로 합시다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "오 나는 천문학자는 아니지만",
+            "comment": "아닌 줄 알았습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "별이란건\n빛을 품어내고서\n뿜어내는 돌멩이를 말한대",
+            "comment": "오늘의 돌멩이 상식이 1 증가했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "그럼 말야\n아침을 오롯이 끌어안은\n조약돌도 별이라고 부를까",
+            "comment": "이제 길가의 돌도\n함부로 밟지 못하게 되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "별이란건\n빛을 품어내고서",
+            "comment": "휴대폰 밝기를 조금 낮춰보세요.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "그럼 말야",
+            "comment": "좋은 대화의 시작입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "너의 눈동자에 떠 있는\n별빛들을",
+            "comment": "눈 건강을 위해\n20분마다 먼 곳을 바라보세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "그럼 말야\n아침을 오롯이 끌어안은\n조약돌도 별이라고 부를까",
+            "comment": "가끔은 이름을 다르게 부르는 것만으로도\n세상이 조금 달라 보입니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "너의 눈동자에 떠 있는\n별빛들을",
+            "comment": "누군가는 당신이 가진 것을\n이미 반짝인다고 생각하고 있을지도 모릅니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "아침을 오롯이 끌어안은\n조약돌도 별이라고 부를까",
+            "comment": "생각보다 많은 것들이\n아직 이름을 기다리고 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "천문학자는 아니지만",
+            "lyric": "너의 눈동자에 떠 있는\n별빛들을\n주머니에 넣어둘 거야",
+            "comment": "오래 간직하고 싶은 마음은\n대개 설명이 잘 되지 않습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "그댈 위한 장미 하날\n심어 둔다면",
+            "comment": "원예 자격증은 없어도 됩니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "향기로운 노래로\n피어날까",
+            "comment": "현재 성장 중입니다.\n잠시만 기다려 주세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "못 다 핀 꽃이 뒤덮인\n어지러운 꿈",
+            "comment": "정리가 필요한 상태로 보입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "꾸물대는 나의 미소 위에다",
+            "comment": "생각보다 많은 일이\n꾸물대면서 시작됩니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "엉켜 있는 가시 넝쿨들이 많긴 해",
+            "comment": "일단 하나씩 푸는 수밖에 없습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "뒤얽혀 있는 가사들을\n꺼내야 해",
+            "comment": "임시저장함을 확인해 보세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "너에게로 뻗어가기만 하면 돼",
+            "comment": "도착은 못 했어도\n방향은 맞을 수 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "그리고 불러야 해\n네가 들을 수 있도록",
+            "comment": "전하고 싶은 말은\n대개 한 번에 전해지지 않습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "그댈 위한 마음이야",
+            "comment": "생각보다 많은 진심은\n결국 들키게 되어 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "들려주고 싶었던",
+            "lyric": "네게 들려주고 싶었던 말이야",
+            "comment": "끝내 하지 못한 말보다\n끝내 하게 된 말이 더 오래 남습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "아직 충분히 크지 않았던\n내 작은 손이",
+            "comment": "성장판이 열려 있던 시절입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "후~\n하~",
+            "comment": "심호흡이 필요해 보입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "이젠 커버린 나의 두 손이",
+            "comment": "성인 요금 적용 대상입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "일기장에 적어 놓았던\n풍경들이",
+            "comment": "옛날 사진첩을 열어볼 확률\n87%",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "가끔은 그리운 한 숨을 쉬어",
+            "comment": "오늘은 괜히 예전 노래가\n듣고 싶은 날입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "담벼락에 핀\n작은 꽃 송이",
+            "comment": "생각보다 많은 좋은 기억은\n별것 아닌 장소에 남아 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "그땐 내겐 전부라고\n여겨졌었던",
+            "comment": "그 시절엔 정말 중요했으니까요.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "이젠 웃음 보단\n미소로만 남아서",
+            "comment": "시간이 지나면\n감정의 모서리가 조금 둥글어집니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "가끔은 기억 조차도 않나",
+            "comment": "잊어버린 것이 아니라\n잠시 꺼내보지 않았던 것일 수도 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가끔은",
+            "lyric": "이젠 울음 보단\n미소로만 남아서\n내 곁을 지키네",
+            "comment": "오래된 기억이 좋은 이유는\n떠나지 않기 때문일지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "푸념",
+            "lyric": "세 살은 더 먹어야\n세상을 알게되겠죠",
+            "comment": "현재 레벨이 부족합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "새싹이 돋아 나듯이\n새 살은 돋아나겠죠",
+            "comment": "자동 복구 기능이 실행 중입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "시계 바늘은\n내 붙잡음을 멀리하고 가겠죠",
+            "comment": "시간은 고객님의 의견을\n수렴하지 않습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "여기저기 떠밀려\n넘어졌어요",
+            "comment": "오늘도 중력은 정상 작동 중입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "잘해보려 하다가\n넘어졌어요",
+            "comment": "넘어졌다는 건\n일단 시도는 했다는 뜻입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "또다시 길지 않은\n방학이 찾아오겠죠",
+            "comment": "주말도 비슷한 개념입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "푸념",
+            "lyric": "아물지 않은 상처가\n다시 찢겼죠",
+            "comment": "같은 자리라고 해서\n같은 아픔인 건 아닙니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "푸념",
+            "lyric": "나의 목소리는 언제까지\n메아리만 칠까요",
+            "comment": "답장이 늦는다고 해서\n말이 사라지는 것은 아닙니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "푸념",
+            "lyric": "세 살은 더 먹어야\n세상을 알게되겠죠",
+            "comment": "다행히 세상도\n그 사이 조금씩 바뀌고 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "푸념",
+            "lyric": "나의 목소리는 언제서야\n응답받게 될까요",
+            "comment": "생각보다 먼 곳에서\n이미 누군가는 듣고 있을지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "네모난 상자 안에 갇힌\n동그란 마음",
+            "comment": "현재 포장 상태가\n본품과 다를 수 있습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "뚜렷한 글씨 안에 갇힌\n투명한 말",
+            "comment": "설명서를 읽어도\n이해가 안 되는 제품입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "우린 검증 받지 않은\n번역가들",
+            "comment": "본 번역은 정확하지 않을 수 있습니다.",
+            "amount": "10000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "언제나 알아주기란 힘들지",
+            "comment": "생각보다 많은 고객센터가\n같은 입장입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "언제나 보여 주기란 어렵지",
+            "comment": "스크린샷 첨부를 권장합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "조그만 불빛 아래 숨긴\n커다란 밤",
+            "comment": "조명은 생각보다 많은 것을 숨겨줍니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "이해하고 싶어\n이해 받고 싶어",
+            "comment": "생각보다 많은 갈등은\n여기서 시작됩니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "과감한 걸음 아래 숨긴\n가난한 발",
+            "comment": "겉으로 보이는 것만으로는\n대부분 설명되지 않습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "우린 진실 할 수 없는\n반역가들",
+            "comment": "누구나 조금씩은\n자기 자신을 배신하며 살아갑니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "반역가들",
+            "lyric": "서로를 위해\n스스로를 거역하며\n서성이지",
+            "comment": "가장 어려운 일은\n타인이 아니라 자신과 타협하는 일일지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "나는 내가 누구인지\n누가 아닌지조차\n알지 못하는데",
+            "comment": "본인 확인에 실패했습니다.",
+            "amount": "5000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "머리 맡에 둔 책들은\n끝없이 이야기를 하려 하지만",
+            "comment": "독서의 압박이 감지되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "하나를 알게 되면\n열 개를 모르게 되는 것 같아",
+            "comment": "정상 작동 중입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "배워야 할 것들이 넘쳐나",
+            "comment": "할 일 목록도 비슷한 상태입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "내가 듣고싶은 건\n그런게 아냐",
+            "comment": "고객님의 요구사항이\n명확하지 않습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "무얼 알고 싶은 건지도\n사실은 잘 모르겠어",
+            "comment": "검색어를 다시 입력해 주세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "내가 너에게 그은 상처의\n깊이는 얼마나 될까",
+            "comment": "지나고 나서야 보이는 것들이 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "무얼 알고 싶은 건지도\n사실은 잘 모르겠어",
+            "comment": "생각보다 많은 사람들의 출발점은\n바로 여기입니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "지식보다 거대한 우주에는\n배워야 할 것들이 넘쳐나",
+            "comment": "알게 된 것보다\n아직 모르는 것이 더 많다는 사실은\n조금 안심이 되기도 합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "지식보다 거대한 우주에는",
+            "lyric": "하나를 알게 되면\n열 개를 모르게 되는 것 같아",
+            "comment": "성장은 종종\n답을 얻는 과정이 아니라\n질문이 늘어나는 과정입니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "오늘 하루는 왜 이리도 짧아",
+            "comment": "오전 10시였는데\n갑자기 오후 4시가 되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "게으름이란 불명예",
+            "comment": "명예 회복은 내일부터 가능합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "누가 치지 않으면 움직이지 않는\n볼품없는 놈인가",
+            "comment": "외부 동력이 필요합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "내 계획 속엔 없던\n예외 속의 구멍에",
+            "comment": "계획표는 원래 이렇게 사용합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "홀인원은 바라지도 않아\n나는 그곳으로 가기만을 바랄 뿐야",
+            "comment": "도착만 해도 성공으로 인정합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "해맑게 웃는 저 아이들처럼\n웃어 볼 거에요",
+            "comment": "일단 웃고 시작해 보겠습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "빠라빠빠바라 하고 멋지게 등장하고 팠는데\n헛발질만 해댔구나",
+            "comment": "생각했던 버전의 나와\n실제 버전의 나 사이에는 늘 차이가 있습니다.\n빠라빠빠바라",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "나의 하루는 고달픈",
+            "comment": "오늘이 유독 길었던 사람에게\n발급되는 카드입니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "난 거짓으로 맹세하고 있진 않아",
+            "comment": "결과와는 별개로\n진심이었던 날도 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "하품만 나오네",
+            "lyric": "아 근데 졸려\n졸려 죽겠어\n졸려서 미치겠어",
+            "comment": "오늘은 여기까지 하라는\n우주의 강력한 권고입니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "이백서른두번째 다짐",
+            "comment": "이전 231회차의 결과는\n묻지 않겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "고장이 난 시계 속의\n스물 네 시간을 되찾자",
+            "comment": "시간 복구 기능은\n지원되지 않습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "숨을 쉬어\n그리고 내뱉어",
+            "comment": "축하합니다.\n현재까지는 성공입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "건져 올릴 하루를\n담담히 써 내려 가보자",
+            "comment": "일단 오늘 날짜부터 적어봅시다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "그렇게\n하나씩 해보는 거야",
+            "comment": "생각보다 많은 문제의 정답입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "묻혀 있는 시간 위에\n노래를 부르자",
+            "comment": "미뤄둔 폴더를 열어볼 시간입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "의미를 알지 못한\n하루 속에",
+            "comment": "그날엔 몰랐지만\n나중에 의미가 생기는 날도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "온기를 담지 못한\n순간들에게\n사과해야지",
+            "comment": "누구나 조금은 아쉬운 장면을\n남기고 살아갑니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "이젠 다가가야지",
+            "comment": "준비가 끝나서 움직이는 경우보다\n움직이면서 준비되는 경우가 더 많습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "이백서른두번째 다짐",
+            "lyric": "숨을 쉬어\n그리고 내뱉어\n그렇게\n하나씩 해보는 거야",
+            "comment": "생각보다 많은 일은\n생각보다 단순한 곳에서 시작됩니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "쉿 우릴 위해 건배\n(하지만 난 곤드레)",
+            "comment": "계획보다 빠르게 진행되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "취하지 않아 언제\n(넘어질지 모르는데)",
+            "comment": "신뢰도가 다소 낮은 진술입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "뭘 그렇게 자꾸 겁내",
+            "comment": "본인이 가장 겁내고 계신 것 같습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "거친 걸음으로\n거리 위를 걷는",
+            "comment": "천천히 걸어도 목적지는 같습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "망설임을 끝내\n내게 손을 건네",
+            "comment": "확인 버튼을 누르시겠습니까?",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "너, 나와 함께\n숨을 쉬어줄래",
+            "comment": "일단 심호흡부터 해보겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "난 멋진 모습으로\n걷진 못하지만",
+            "comment": "생각보다 많은 사람들이\n비슷한 속도로 걷고 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "그림자는 우릴 가리고 있지만",
+            "comment": "보이지 않는다고 해서\n없는 것은 아닙니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "그림자는 너를 가리고 있지만\n그림자는 너를 가질 수 없단 걸 잊지마",
+            "comment": "당신을 설명하는 것은\n당신의 그림자가 아닙니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "그림자 위로",
+            "lyric": "우리, 이제 함께\n숨을 쉬어볼까",
+            "comment": "혼자 버티는 것보다\n함께 버티는 것이 쉬운 날도 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "야 거기 망치질 좀 그만해 봐",
+            "comment": "층간소음 민원이 접수되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "못이 튀어나와야\n액자를 걸지",
+            "comment": "문제 발생이 확인되었습니다.\n이제 작업을 시작할 수 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "어서 와 우리의 무덤이야\n어서 와 우리의 요람이야",
+            "comment": "설명이 더 필요할 것 같습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "박해받은 바람들이\n바닥 아래로 모여",
+            "comment": "바라기만 하고 미뤄둔 일들의 집합소로 추정됩니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "이 지하가 내 비행의\n마지막 고도일지",
+            "comment": "지하 1층도 출발점이 될 수 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "홀린 듯이 떠들어\n우리가 여기 있어",
+            "comment": "회의는 시작되었지만\n결론은 아직 없습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "가짜 꿈에 유배된 건\n아니겠지",
+            "comment": "가끔은 지금 가는 길이 맞는지\n확인받고 싶어집니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "우리가 여기 있어",
+            "comment": "생각보다 많은 사람들은\n존재를 증명하며 살아갑니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "이제 우리가\n나갈 차례야",
+            "comment": "문이 열리는 순간은\n생각보다 갑자기 찾아옵니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "가짜꿈",
+            "lyric": "가짜 꿈에 유배된 건\n아니겠지",
+            "comment": "오래 품고 있는 질문이라고 해서\n틀린 질문은 아닙니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "게인을 더 높여봐\n폭발할 거야",
+            "comment": "볼륨 조절에 실패했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "헤이 미스터 갤럭시\n뭐 그리 혼자 빛나고 있어",
+            "comment": "자아가 다소 건강한 상태입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "헤이 미스 무지개\n뭐 그리 혼자서 숨어 있어",
+            "comment": "발견되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "폭우가 그치게\n기다릴 필요 이젠 더 없어",
+            "comment": "가끔은 우산 쓰고 나가는 게\n더 빠릅니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "얼굴을 내밀어 봐",
+            "comment": "일단 참석 버튼부터 눌러봅시다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "게인은 너와 나\n빅뱅의 부싯돌",
+            "comment": "혼자보다 둘이\n조금 더 시끄럽습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "별과 별 사이엔\n어둠이 더 많아",
+            "comment": "반짝이는 순간보다\n평범한 시간이 훨씬 많습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "얼굴을 내밀어 봐\n넌 이미 전 우주야",
+            "comment": "생각보다 많은 사람들은\n자신을 과소평가합니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "지글댈 주파수가\n은하수를 다 채울 거야",
+            "comment": "작은 신호도\n멀리까지 닿을 수 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "게인주의",
+            "lyric": "아 우린 은하만한 게인이야",
+            "comment": "혼자일 땐 몰랐던 크기를\n함께일 때 알게 되는 경우가 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "안녕 난 무명성 지구인이야",
+            "comment": "본인 소개가 다소 독특합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "반가워\n내 이름은 아무개",
+            "comment": "회원가입을 건너뛰었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "명왕성에나 갈까\n아참 너도 쫓겨 났구나",
+            "comment": "동병상련이 확인되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "그게 무언진\n나도 잘 모르겠어",
+            "comment": "일단 시작한 사람들의\n상당수가 여기 있습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "무명실로\n뭔갈 기워 가는데",
+            "comment": "완성본은 나중에 생각합시다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "곱씹어 볼수록\n아무 것도 없는",
+            "comment": "생각을 너무 오래 하면\n배가 고파집니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "기억 할 필욘 없어",
+            "comment": "모든 것을 남길 필요는 없습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "그게 무언진\n나도 잘 모르겠어",
+            "comment": "정답을 모른 채\n계속 만드는 일도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "이름 하나 새기지 않고 사는 삶도\n자연스러울 수 있단 거잖아",
+            "comment": "눈에 띄지 않는 삶이라고 해서\n작은 삶은 아닙니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "무명성 지구인",
+            "lyric": "신에게 이름을 물었더니\n신이 말하길\n난 이름이 없어",
+            "comment": "이름보다 오래 남는 것들이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "근데 나는 마름모야",
+            "comment": "개성이 강한 사각형입니다.",
+            "amount": "5000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "변과 변과 변과 변을\n똑같이 나열하는\n그저 변명꾼이야",
+            "comment": "말이 많다는 뜻으로 이해했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "우주 like 섬띵 투 드링크",
+            "comment": "과음은 건강에 해롭습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "다음 장마가 오면",
+            "comment": "우산을 미리 준비해 두겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "난 입을 크게 벌려서",
+            "comment": "일단 크게 먹고 생각합시다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "비는 직선이 아니라\n동그라미로 내리는 걸",
+            "comment": "오늘도 세상은 생각보다 복잡합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "뭔가 달랐을까",
+            "comment": "가끔은 이미 지나간 선택지를\n한 번쯤 다시 떠올리게 됩니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "여전히 삐뚜루 서 있지",
+            "comment": "여기서 기다리고 계시는군요.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "우주라는 구와 원을\n다 들이켜 버릴거야",
+            "comment": "사람은 생각보다 큰 것들을\n품고 살아가기도 합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "우주 like 섬띵 투 드링크",
+            "lyric": "아 우린 은하만한 게인이야",
+            "comment": "작다고 생각했던 신호가\n누군가에겐 우주만큼 크게 닿을 수 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "우산이 가려버린",
+            "comment": "우산 사용법을 숙지해 주시기 바랍니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "난 비가 되고파",
+            "comment": "기상청과 협의가 필요합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "물기 없는 빛이\n이해하지 못할",
+            "comment": "수분 함량 부족으로 판정되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "빗 속에서\n찾지 못했던 따스함을",
+            "comment": "따뜻한 음료를 권장합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "난 빗 속에서\n눈물 흘릴 때 찾곤 해",
+            "comment": "생각은 이상하게 샤워할 때도 잘 납니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "너의 눈물을 볼 때",
+            "comment": "휴지를 준비해 두겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "빛은 모를거야\n그 눈부심이 나를 울게 하는 걸",
+            "comment": "누군가에겐 좋은 것이\n누군가에겐 버거울 수도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "물기 없는 빛이\n이해하지 못할\n눈물이 흐른다는 걸",
+            "comment": "겪어보지 못한 마음은\n설명하기 어렵습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "너의 눈물을 볼 때\n난 비가 되고파",
+            "comment": "종종 위로는\n해결해주지 못하더라도 단지 곁에 있어 주는 것으로 충분합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "빗 속에서",
+            "lyric": "우산이 가려버린\n붉은 두 뺨 위로\n너의 눈물과 함께 흐르고파",
+            "comment": "누군가의 슬픔을 이해하는 일은\n같이 젖어보는 것에서 시작될지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "좋은 아침이란 말 대신\n고된 하루라는 말로",
+            "comment": "현실적인 인사법입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "길을 걷다가 햇살이\n자꾸만 나를 째려봐서",
+            "comment": "햇살 측의 입장은 다를 수 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "나도 같이 노려보다가\n눈물이 핑하고 돌았네",
+            "comment": "결과적으로 패배했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "시시콜콜한 헛소리를\n진지하게 할 수 있어서",
+            "comment": "생각보다 중요한 기술입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "눈이 팅팅 부은\n너는 나를 보고선 웃어",
+            "comment": "컨디션보다 관계가 먼저인 날이 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "고된 나날들을 함께\n빈정거리면서 낄낄대고",
+            "comment": "오늘도 생존에 성공했습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "시시콜콜한 헛소리를\n진지하게 할 수 있어서",
+            "comment": "편한 사람의 기준은\n생각보다 단순할지도 모릅니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "눈이 팅팅 부은\n너는 나를 보고선 웃어",
+            "comment": "누군가 웃어주면\n하루가 조금 가벼워지기도 합니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "정말 다행이군\n너와 내가 우리라서",
+            "comment": "혼자서는 웃기지 않았을 일들이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "정말 다행이군",
+            "lyric": "정말 다행이군\n정말 다행이야",
+            "comment": "당연하게 여겼던 것들 중에\n가장 소중한 것들이 숨어 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "여긴 그냥 관광지\n우리는 관광지의 주민이지",
+            "comment": "정작 주민 할인은 없습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "여기에 사는 것은 우린데 실은\n죽은 사람들과 관광객이 주인이지",
+            "comment": "집주인 확인이 필요합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "어제를 그려\n오늘을 내일에\n헐값에 팔아",
+            "comment": "중고거래의 고수로 판정되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "박물관 앞에서\n그림을 그려 파는\n친구녀석이 묻더라",
+            "comment": "오늘도 영업 중입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "벽의 여백엔 작품이 걸려 있고\n밖의 공백엔 기념품이 널려 있지",
+            "comment": "출구 근처가 제일 위험합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "저 안에 자리는\n안 그래도 얼마 없으니까",
+            "comment": "만석입니다.\n다음 회차를 이용해 주세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "우린 끊임 없이\n그들을 되내이는데\n그들은 딱히 우릴 기억해주지 않아",
+            "comment": "생각보다 많은 추억은\n한쪽만 열심히 기억하고 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "세기가 다섯 번을 더 지나도\n나 같은 놈은 여전하겠지",
+            "comment": "변하지 않은 것 같다가도\n돌아보면 꽤 멀리 와 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "과거도 우리한테\n빚을 지고 있다고",
+            "comment": "기억은 과거를 보존하는 일만이 아니라\n새로 쓰는 일이기도 합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "관광지 사람들",
+            "lyric": "우린 그냥 그 주위를\n그리다가 글이 되겠지",
+            "comment": "구경하는 사람보다\n살아가는 사람이 먼저였습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "안테나가 전부 다 숨어버렸고",
+            "comment": "수신 상태가 원활하지 않습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "라디오는 노래들을\n잊어버렸습니다",
+            "comment": "플레이리스트를 분실했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "무지개가 뿌리째\n말라버렸고",
+            "comment": "습도 관리가 필요합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "소나기는 출구를\n잃어버렸습니다",
+            "comment": "생각도 가끔 길을 잃습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "새벽이 빌려 준 마음을",
+            "comment": "반납 기한 확인 부탁합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "나는 오래도 쥐었나 봅니다",
+            "comment": "놓을 타이밍을 놓친 것으로 보입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "사람이 된 신도\n결국엔 울었고",
+            "comment": "생각보다 많은 것들이\n결국은 마음의 문제였습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "새야 조그만 새야\n너는 왜 날지 않아",
+            "comment": "가끔은 날개보다\n용기가 부족한 날이 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "새벽이 빌려 준 마음을\n나는 오래도 쥐었나 봅니다",
+            "comment": "어떤 마음은 원래\n생각보다 오래 머무릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새벽이 빌려준 마음",
+            "lyric": "아마 아침이 오면\n나도, 나도 그래",
+            "comment": "지금은 아니어도\n언젠가 움직일 수 있을 거라는 믿음이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "구겨진 하루를 가지고 집에 와요",
+            "comment": "어쩌다가 구겼을까요.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "매일 밤 다려야만\n잠에 들 수 있어요",
+            "comment": "야간 근무가 확인되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "종일 적어내렸던\n구구절절한 일기는",
+            "comment": "요약 기능이 필요합니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "손바닥에 새겨진 아픔까지\n잡았던 손을",
+            "comment": "생각보다 오래 잡고 있었네요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "생각보다 금방\n놓아 버렸어요",
+            "comment": "인생에는 저장 버튼이 없습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "손장갑을 끼지 않아도\n움켜쥘 수 있다고\n자신했는데",
+            "comment": "생각보다 추웠던 모양입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "내 야위어 가는 마음은\n어디에 심죠",
+            "comment": "어디에 두어야 할지 모르는 마음도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "온도가 시작되는 곳에서\n눈도 길을 잃은걸까요",
+            "comment": "괜찮습니다.\n가끔은 마음도 방향을 잃습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "화창한 하늘 아래서 우리는\n한참을 무엇을 기른걸까요",
+            "comment": "결과보다 오래 남는 것은\n그 시간을 보낸 우리일지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "구겨진 하루를",
+            "lyric": "구겨진 하루를 가지고 집에 와요\n매일 밤 다려야만 잠에 들 수 있어요",
+            "comment": "잘 살아낸 하루는\n언제나 조금 구겨져 있습니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "기름을 채울 필요는\n없을 거야",
+            "comment": "연비 걱정은 하지 않겠습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "나는 노래들을\n너는 춤 외엔 챙길 거 없어",
+            "comment": "수하물 규정을 확인했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "커피를 마시지 않았는데도\n나는 카페인이 되어 버린 것 같아",
+            "comment": "원인을 알 수 없는 각성 상태입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "너무 높지 않게\n너무 낮지 않게",
+            "comment": "적당함도 기술입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "잠은 천장에 붙어\n떨어지지 않아",
+            "comment": "수면이 현재 외출 중입니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "낮이 섞인 밤들을 마주하면",
+            "comment": "생활 패턴이 협조를 거부했습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "콘크리트 건물들을 보다 보면\n나도 시멘트가 되어 버린 것 같아",
+            "comment": "가끔은 사람보다 배경처럼 느껴지는 날도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "가면 뒤의 얼굴을 마주하면",
+            "comment": "생각보다 많은 사람들은\n생각보다 많은 얼굴을 가지고 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "도시 한가운데\n파란 호수를 만들자",
+            "comment": "삶은 가끔 현실적인 사람들 덕분이 아니라\n이상적인 사람들 덕분에 바뀌기도 합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "날아가자",
+            "lyric": "떠나자 떠나자 떠나자",
+            "comment": "떠나세요,\n어디로 가는지는 몰라도\n지금보다는 나아질 것 같은 날이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "새 공책을 펼쳐 놓고서도\n같은 낙서만 해",
+            "comment": "펼친게 어디입니까.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "새 기타 줄을 꺼내 놨지만\n내가 아는 코드는 단지 이것 뿐인 걸",
+            "comment": "그 코드를 많이 치셨나보네요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "접고 적고 다시 접어\n자꾸 접고 다시 적어",
+            "comment": "최종_final_진짜최종_v7 버전입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "구겼다가 펼치고\n숨죽였다가 설치게 되네",
+            "comment": "생각보다 정상적인 진행 과정입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "이젠 어쩔 수 없나봐\n그냥 불러야만 할 것 같아",
+            "comment": "결국 제출 버튼을 누르게 됩니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "언제야 나는\n부를 수 있을까",
+            "comment": "준비가 끝나는 날은 오지 않습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "새 공책을 펼쳐 놓고서도\n같은 낙서만 해",
+            "comment": "사람은 생각보다 쉽게 바뀌지 않고\n생각보다 자주 다시 시작합니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "낡은 마음을\n그대에게 주고 싶어",
+            "comment": "새로운 관계도 결국은\n지금의 나로 시작합니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "내 낡은 하루들과\n내 낡은 바람들과\n내 낡은 이야기를",
+            "comment": "새로운 삶은\n새로운 사람이 되는 것이 아니라\n새로운 이야기를 쓰는 것일지도 모릅니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "새롭게 쓰고 싶어",
+            "lyric": "너와 새롭게 쓰고 싶어",
+            "comment": "다시 쓰고 싶은 것은\n대개 지나간 시간이 아니라\n함께한 사람입니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "허튼소리는 사랑의\n다른 말일지 몰라",
+            "comment": "그렇다고 드립으로 고백은 말리고 싶습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "여하튼 둘 중에 하나도\n나는 다룰 줄 몰라",
+            "comment": "전문 분야가 아닙니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "나는 실눈을 뜨고\n잠꼬대를 할 거야",
+            "comment": "공식 입장이 아닙니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "신은 언제나 내게서\n말을 앗아가시곤",
+            "comment": "하고 싶은 말은 있었는데\n정리가 안 됐습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "심장 소리로 모든 걸\n대신하게 하더라",
+            "comment": "설명서는 따로 없습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "실은 내 물감통에는\n단색뿐이었는데",
+            "comment": "재료보다 결과물이 화려한 날도 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "잠결에 들은 것 같아\n네가 나를 불렀니",
+            "comment": "확신은 없는데\n왠지 그런 것 같을 때가 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "여하튼 둘 중에 하나도\n나는 다룰 줄 몰라",
+            "comment": "좋아하는 것일수록\n서툰 경우가 많습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "아마 내가 밤이었을 때에도\n넌 언제나 동그란 아침이었어",
+            "comment": "누군가는 안온하게 당신을 기다려주는군요.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "허튼소리",
+            "lyric": "아마 내가 망원경이었을 때\n넌 언제나 영롱한 별자리야",
+            "comment": "멀리있어도 바라 볼 수밖에  없는 것들이 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "친구들이 그래\n네 가사는 너무 어려워",
+            "comment": "친구 측 의견이 접수되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "편지 한 장도\n종일 쓰는걸",
+            "comment": "작성 중...\n(7시간째)",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "벌써 진부하다",
+            "comment": "뜨끔.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "뭔가 특별하게\n말하고 싶었어",
+            "comment": "결국 카톡에 \"ㅇㅇ\"만 보냈습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "눈을 감아봐",
+            "comment": "잠시 상상 모드로 전환됩니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "자주 커피를 사 마시던",
+            "comment": "카페는 생각보다 많은 이야기를 알고 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "사실 특별해서\n주저한 걸지도",
+            "comment": "중요한 말일수록\n오래 망설이게 됩니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "사실 특별한 건\n아 글쎄 그거 있잖아",
+            "comment": "설명은 못 하겠는데\n분명히 있는 것들이 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "사랑해 널",
+            "comment": "생각보다 많은 문장은\n세 글자면 충분합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "굳이 진부하자면",
+            "lyric": "뭔가 특별하던 일들만 우리의 사진첩 속에 둘 순 없는 걸",
+            "comment": "대부분의 인생은 하이라이트 영상에 들어가지 않습니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "달 위에다 발자국을\n남기고 싶진 않아",
+            "comment": "우주개발 예산이 부족합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "위대한 공식이\n길게 늘어서 있는",
+            "comment": "시험 범위로 지정되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "달이 참 예쁘다",
+            "comment": "천문학자의 입장은 다를 수 있습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "숨고 싶을 땐\n다락이 되어 줄 거야",
+            "comment": "임시 대피소가 마련되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "울고 싶은 만큼\n허송세월 해 줄 거야",
+            "comment": "오늘 하루 정도는\n생산성을 쉬게 해도 됩니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "우리 가면무도회를 열자",
+            "comment": "드레스코드는 자유입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "살아서 그들의 이름을\n한번 더 불러 볼래",
+            "comment": "기억은 생각보다\n자주 불러줘야 남습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "단지 너와\n발맞추어 걷고 싶었어",
+            "comment": "같은 방향보다\n같은 속도가 필요한 날도 있습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "수만 광년의 일렁임을 거두어\n지금을 네게 들려 줄거야",
+            "comment": "영원보다 지금 이 순간의 의미가 더 클 수 있습니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "달이 참 예쁘다고",
+            "lyric": "달이 참 예쁘다고",
+            "comment": "어떤 문장은\n돌려 말할수록 더 진심에 가까워집니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "어머 난 난시가 있어 아마",
+            "comment": "안경점 방문을 권장합니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "토성의 고리\n손가락엔 안 맞아",
+            "comment": "사이즈를 확인하세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "천체를 접붙인 왕관을 가져와도\n어머 난 얼굴도 작아 아마",
+            "comment": "자랑은 적당히 합시다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "눈 감아 휘청이는 건\n좀 봐주세요",
+            "comment": "퇴근 직전으로 판정되었습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "시대의 품 속에\n얼어붙은 우린",
+            "comment": "에어컨 온도를 올리세요.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "얼어 죽을 개인\n얼어 죽을 내일",
+            "comment": "일기예보를 확인하세요.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "아마 빛을 잃은 거울",
+            "comment": "닦아보셨습니까?",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "아마 위층에는 해야",
+            "comment": "층간소음 관련 문의는\n관리사무소로 부탁드립니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "아마 미쳐가는 서울에",
+            "comment": "서울시의 입장은 다를 수 있습니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      },
+      {
+            "song": "뒤척이는 허울",
+            "lyric": "아마 뒤척이는 허울",
+            "comment": "일단 누워서 생각합시다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "불협화음도 괜찮으니까",
+            "comment": "옆 사람의 의견은 다를 수 있습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "박자를 놓쳐도\n'삑'소리를 내도",
+            "comment": "한번은 봐드리겠습니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "자신감 있게 좀 해봐라",
+            "comment": "근거는 없어도 됩니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "문 닫고 이리 들어와",
+            "comment": "회의가 시작되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "문 열고 이제는 나가자",
+            "comment": "회의가 종료되었습니다.",
+            "amount": "5000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "더어어듬\n더듬거려도",
+            "comment": "일단 시작한 사람에게만\n주어지는 상태입니다.",
+            "amount": "10000원",
+            "rarity": "common"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "들어주는 이 하나 없고\n우릴 막간 녀석들로 보는구나",
+            "comment": "처음부터 주목받는 사람은\n생각보다 많지 않습니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "우리의 목소리들은\n턱없이 희미하고 작았던 거구나",
+            "comment": "작다고 해서\n의미 없는 것은 아닙니다.",
+            "amount": "20000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "네 목소린\n세상 유일한 것이야",
+            "comment": "생각보다 많은 사람들은\n자기 목소리를 과소평가합니다.",
+            "amount": "30000원",
+            "rarity": "rare"
+      },
+      {
+            "song": "없을걸",
+            "lyric": "우리를 멈출 수는 없을 걸",
+            "comment": "멈출 수 없다고 마음 먹으면 멈출 수 없습니다.",
+            "amount": "30000원",
+            "rarity": "secret"
+      }
+];
+
+    const blankCard = {
+      song: "꽝",
+      lyric: "집게가 허공을 집었습니다.",
+      comment: "하지만 후정산의 기운은 남아 있습니다.",
+      amount: "0원",
+      rarity: "blank"
+    };
+
+    const machine = document.getElementById("machine");
+    const drawBtn = document.getElementById("drawBtn");
+    const againBtn = document.getElementById("againBtn");
+    const joinBtn = document.getElementById("joinBtn");
+    const cardEl = document.getElementById("card");
+    const actions = document.getElementById("actions");
+    const songEl = document.getElementById("song");
+    const lyricEl = document.getElementById("lyric");
+    const commentEl = document.getElementById("comment");
+    const amountEl = document.getElementById("amount");
+    const pools = cards.reduce((grouped, card) => {
+      grouped[card.rarity].push(card);
+      return grouped;
+    }, { common: [], rare: [], secret: [] });
+
+    let audioContext;
+
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return null;
+        audioContext = new AudioContextClass();
+      }
+      if (audioContext.state === "suspended") audioContext.resume();
+      return audioContext;
+    }
+
+    function playTone(frequency, startTime, duration, gainValue, type = "sine") {
+      const context = getAudioContext();
+      if (!context) return;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(gainValue, startTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration + 0.02);
+    }
+
+    function playClickSound() {
+      const context = getAudioContext();
+      if (!context) return;
+      const now = context.currentTime;
+      playTone(520, now, 0.08, 0.06, "square");
+      playTone(780, now + 0.055, 0.09, 0.045, "sine");
+    }
+
+    function playRevealSound() {
+      const context = getAudioContext();
+      if (!context) return;
+      const now = context.currentTime;
+      playTone(880, now, 0.08, 0.04, "sine");
+      playTone(1175, now + 0.07, 0.1, 0.035, "sine");
+      playTone(1568, now + 0.14, 0.12, 0.03, "triangle");
+    }
+
+    function chooseFrom(poolName) {
+      const pool = pools[poolName];
+      if (!pool || pool.length === 0) return cards[Math.floor(Math.random() * cards.length)];
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function pickWeightedCard() {
+      const roll = Math.random() * 100;
+      if (roll < 3) return blankCard;
+      if (roll < 8) return chooseFrom("secret");
+      if (roll < 28) return chooseFrom("rare");
+      return chooseFrom("common");
+    }
+
+    function renderCard(card) {
+      songEl.textContent = card.song === "꽝" ? "💥 꽝" : "🎵 " + card.song;
+      lyricEl.textContent = "“" + card.lyric + "”";
+      commentEl.textContent = card.comment;
+      amountEl.textContent = card.amount;
+    }
+
+    function pickCard() {
+      playClickSound();
+      cardEl.classList.remove("show");
+      actions.classList.remove("show");
+      drawBtn.disabled = true;
+      drawBtn.textContent = "집게 작동 중...";
+      machine.classList.add("drawing");
+
+      setTimeout(() => {
+        const card = pickWeightedCard();
+        renderCard(card);
+        machine.classList.remove("drawing");
+        drawBtn.disabled = false;
+        drawBtn.textContent = "가사 뽑기";
+        cardEl.classList.add("show");
+        actions.classList.add("show");
+        playRevealSound();
+      }, 1800);
+    }
+
+    drawBtn.addEventListener("click", pickCard);
+    againBtn.addEventListener("click", pickCard);
+    joinBtn.addEventListener("click", () => {
+      window.open("https://m.dcinside.com/board/bgsmsyl/177159", "_blank", "noopener,noreferrer");
+    });
+  </script>
+</body>
+</html>
